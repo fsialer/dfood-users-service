@@ -86,4 +86,53 @@ public class UserPersistenceAdapterTest {
         Mockito.verify(userJpaRepository,times(1)).findById(anyLong());
         Mockito.verify(userPersistenceMapper,times(1)).toUser(any(UserEntity.class));
     }
+
+    @Test
+    void whenSaveUserThenReturnAnUser(){
+        UserEntity userEntity= TestUtils.buildUserEntityMock();
+        User userNew=TestUtils.buildUserMock();
+        when(userJpaRepository.save(any(UserEntity.class)))
+                .thenReturn(userEntity);
+        when(userPersistenceMapper.toUser(any(UserEntity.class)))
+                .thenReturn(userNew);
+        when(userPersistenceMapper.toUserEntity(any(User.class)))
+                .thenReturn(userEntity);
+        User user=userPersistenceAdapter.save(userNew);
+
+        assertAll(
+                ()->assertNotNull(user),
+                ()->assertEquals(userNew.getId(),user.getId())
+        );
+        Mockito.verify(userJpaRepository,times(1)).save(any(UserEntity.class));
+        Mockito.verify(userPersistenceMapper,times(1)).toUser(any(UserEntity.class));
+        Mockito.verify(userPersistenceMapper,times(1)).toUserEntity(any(User.class));
+    }
+
+    @Test
+    void whenUsernameExistThenReturnTrue(){
+        when(userJpaRepository.existsByUsernameIgnoreCase(anyString())).thenReturn (true);
+        assertTrue(userJpaRepository.existsByUsernameIgnoreCase("falex"));
+        Mockito.verify(userJpaRepository,times(1)).existsByUsernameIgnoreCase(anyString());
+    }
+
+    @Test
+    void whenUsernameNotExistThenReturnFalse(){
+        when(userJpaRepository.existsByUsernameIgnoreCase(anyString())).thenReturn (false);
+        assertFalse(userJpaRepository.existsByUsernameIgnoreCase("falex"));
+        Mockito.verify(userJpaRepository,times(1)).existsByUsernameIgnoreCase(anyString());
+    }
+
+    @Test
+    void whenUserEmailExistThenReturnTrue(){
+        when(userJpaRepository.existsByEmailIgnoreCase(anyString())).thenReturn (true);
+        assertTrue(userJpaRepository.existsByEmailIgnoreCase("asialer05@hotmail.com"));
+        Mockito.verify(userJpaRepository,times(1)).existsByEmailIgnoreCase(anyString());
+    }
+
+    @Test
+    void whenUserEmailNotExistThenReturnFalse(){
+        when(userJpaRepository.existsByEmailIgnoreCase(anyString())).thenReturn (false);
+        assertFalse(userJpaRepository.existsByEmailIgnoreCase("asialer05@hotmail.com"));
+        Mockito.verify(userJpaRepository,times(1)).existsByEmailIgnoreCase(anyString());
+    }
 }

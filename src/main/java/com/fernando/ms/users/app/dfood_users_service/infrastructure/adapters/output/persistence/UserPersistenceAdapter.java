@@ -24,4 +24,19 @@ public class UserPersistenceAdapter implements UserPersistencePort {
     public Optional<User> findById(Long id) {
         return jpaRepository.findById(id).map(mapper::toUser);
     }
+
+    @Override
+    public User save(User user) {
+        return mapper.toUser(jpaRepository.save(mapper.toUserEntity(user)));
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return jpaRepository.existsByEmailIgnoreCase(email);
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return jpaRepository.existsByUsernameIgnoreCase(username);
+    }
 }

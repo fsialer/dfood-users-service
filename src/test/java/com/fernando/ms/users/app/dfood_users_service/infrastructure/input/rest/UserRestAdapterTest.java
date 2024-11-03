@@ -1,18 +1,18 @@
 package com.fernando.ms.users.app.dfood_users_service.infrastructure.input.rest;
 
 import Utils.TestUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import com.fernando.ms.users.app.dfood_users_service.application.ports.input.UserInputPort;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.UserRestAdapter;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.mapper.UserRestMapper;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserClientCreateRequest;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserDealerCreateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.response.UserResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,12 +22,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -91,6 +91,62 @@ public class UserRestAdapterTest {
                 .andDo(print());
 
         Mockito.verify(userInputPort,times(1)).findById(anyLong());
+        Mockito.verify(mapper,times(1)).toUserResponse(any(User.class));
+    }
+
+    @Test
+    void shouldReturnAnUserClientWhenSaveUser() throws Exception {
+
+        User user= TestUtils.buildUserMock();
+        UserClientCreateRequest userClientCreateRequest = TestUtils.buildUserClientCreateRequestMock();
+        UserResponse usersResponse= TestUtils.buildUserResponseMock();
+
+        when(userInputPort.save(any(User.class)))
+                .thenReturn(user);
+
+        when(mapper.toUser(any(UserClientCreateRequest.class)))
+                .thenReturn(user);
+
+        when(mapper.toUserResponse(any(User.class)))
+                .thenReturn(usersResponse);
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userClientCreateRequest)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andDo(print());
+
+        Mockito.verify(userInputPort,times(1)).save(any(User.class));
+        Mockito.verify(mapper,times(1)).toUser(any(UserClientCreateRequest.class));
+        Mockito.verify(mapper,times(1)).toUserResponse(any(User.class));
+    }
+
+    @Test
+    void shouldReturnAnUserDealerWhenSaveUser() throws Exception {
+
+        User user= TestUtils.buildUserMock();
+        UserDealerCreateRequest userDealerCreateRequest = TestUtils.buildUserDealerCreateRequestMock();
+        UserResponse usersResponse= TestUtils.buildUserDealerResponseMock();
+
+        when(userInputPort.save(any(User.class)))
+                .thenReturn(user);
+
+        when(mapper.toUser(any(UserDealerCreateRequest.class)))
+                .thenReturn(user);
+
+        when(mapper.toUserResponse(any(User.class)))
+                .thenReturn(usersResponse);
+
+        mockMvc.perform(post("/users/dealer")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userDealerCreateRequest)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andDo(print());
+
+        Mockito.verify(userInputPort,times(1)).save(any(User.class));
+        Mockito.verify(mapper,times(1)).toUser(any(UserDealerCreateRequest.class));
         Mockito.verify(mapper,times(1)).toUserResponse(any(User.class));
     }
 }

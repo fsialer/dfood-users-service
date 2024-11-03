@@ -2,7 +2,9 @@ package com.fernando.ms.users.app.dfood_users_service.application.services;
 
 import Utils.TestUtils;
 import com.fernando.ms.users.app.dfood_users_service.application.ports.output.UserPersistencePort;
+import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserEmailAlreadyExistsException;
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserNotFoundException;
+import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserUsernameAlreadyExistsException;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -64,5 +66,46 @@ public class UserServiceTest {
                 .thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class,()->userService.findById(2L));
         Mockito.verify(userPersistencePort,times(1)).findById(anyLong());
+    }
+
+    @Test
+    void shouldReturnAnUserWhenSaveAnUser(){
+        User userNew=TestUtils.buildUserMock();
+        when(userPersistencePort.save(any(User.class)))
+                .thenReturn(userNew);
+        when(userPersistencePort.existsByUsername(anyString()))
+                .thenReturn(false);
+        when(userPersistencePort.existsByEmail(anyString()))
+                .thenReturn(false);
+        User user=userService.save(userNew);
+        assertEquals(1L,user.getId());
+        Mockito.verify(userPersistencePort,times(1)).existsByUsername(anyString());
+        Mockito.verify(userPersistencePort,times(1)).existsByEmail(anyString());
+        Mockito.verify(userPersistencePort,times(1)).save(any(User.class));
+    }
+
+    @Test
+    void shouldReturnUserEmailAlreadyExistsExceptionWhenEmailExists(){
+        User userNew=TestUtils.buildUserMock();
+
+        when(userPersistencePort.existsByUsername(anyString()))
+                .thenReturn(false);
+        when(userPersistencePort.existsByEmail(anyString()))
+                .thenReturn(true);
+        assertThrows(UserEmailAlreadyExistsException.class,()->userService.save(userNew));
+        Mockito.verify(userPersistencePort,times(1)).existsByUsername(anyString());
+        Mockito.verify(userPersistencePort,times(1)).existsByEmail(anyString());
+        Mockito.verify(userPersistencePort,times(0)).save(any(User.class));
+    }
+
+    @Test
+    void shouldReturnUserUsernameAlreadyExistsExceptionWhenEmailExists(){
+        User userNew=TestUtils.buildUserMock();
+        when(userPersistencePort.existsByUsername(anyString()))
+                .thenReturn(true);
+        assertThrows(UserUsernameAlreadyExistsException.class,()->userService.save(userNew));
+        Mockito.verify(userPersistencePort,times(1)).existsByUsername(anyString());
+        Mockito.verify(userPersistencePort,times(0)).existsByEmail(anyString());
+        Mockito.verify(userPersistencePort,times(0)).save(any(User.class));
     }
 }

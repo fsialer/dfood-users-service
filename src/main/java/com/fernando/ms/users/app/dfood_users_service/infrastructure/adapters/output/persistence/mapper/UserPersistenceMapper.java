@@ -11,4 +11,5 @@ public interface UserPersistenceMapper {
 
     List<User> toUsers(List<UserEntity> users);
     User toUser(UserEntity user);
+    UserEntity toUserEntity(User user);
 }

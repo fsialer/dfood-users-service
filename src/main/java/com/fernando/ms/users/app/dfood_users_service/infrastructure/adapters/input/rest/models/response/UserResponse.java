@@ -9,6 +9,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @Builder
+@ToString
 public class UserResponse {
     private Long id;
     private String username;

@@ -3,6 +3,8 @@ package Utils;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.StatusUser;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.TypeUser;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserClientCreateRequest;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserDealerCreateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.response.UserResponse;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.output.persistence.models.UserEntity;
 
@@ -41,5 +43,34 @@ public class TestUtils {
                 .statusUser(StatusUser.REGISTERED)
                 .build();
     }
+
+    public static UserClientCreateRequest buildUserClientCreateRequestMock(){
+        return UserClientCreateRequest.builder()
+                .username("falex")
+                .email("asialer05@hotmail.com")
+                .password("password")
+                .build();
+    }
+
+    public static UserDealerCreateRequest buildUserDealerCreateRequestMock(){
+        return UserDealerCreateRequest.builder()
+                .username("falex")
+                .email("asialer05@hotmail.com")
+                .password("password")
+                .build();
+    }
+
+    public static UserResponse buildUserDealerResponseMock(){
+        return UserResponse.builder()
+                .id(1L)
+                .username("falex")
+                .email("asialer05@hotmail.com")
+                .typeUser(TypeUser.DEALER)
+                .verify(false)
+                .statusUser(StatusUser.REGISTERED)
+                .build();
+    }
+
+
 
 }

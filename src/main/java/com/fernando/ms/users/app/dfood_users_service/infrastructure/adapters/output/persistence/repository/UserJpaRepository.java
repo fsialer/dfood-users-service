@@ -4,4 +4,6 @@ import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.out
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserJpaRepository extends JpaRepository<UserEntity,Long> {
+    boolean existsByEmailIgnoreCase(String email);
+    boolean existsByUsernameIgnoreCase(String username);
 }
