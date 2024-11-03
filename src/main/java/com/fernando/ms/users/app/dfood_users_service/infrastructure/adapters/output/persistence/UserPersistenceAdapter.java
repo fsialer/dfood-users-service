@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -17,5 +18,10 @@ public class UserPersistenceAdapter implements UserPersistencePort {
     @Override
     public List<User> findAll() {
         return mapper.toUsers(jpaRepository.findAll());
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return jpaRepository.findById(id).map(mapper::toUser);
     }
 }

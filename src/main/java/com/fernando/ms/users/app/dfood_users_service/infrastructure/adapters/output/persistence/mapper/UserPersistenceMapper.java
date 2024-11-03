@@ -10,4 +10,5 @@ import java.util.List;
 public interface UserPersistenceMapper {
 
     List<User> toUsers(List<UserEntity> users);
+    User toUser(UserEntity user);
 }

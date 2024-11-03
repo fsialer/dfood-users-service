@@ -7,4 +7,5 @@ import java.util.List;
 public interface UserInputPort {
 
     List<User> findAll();
+    User findById(Long id);
 }

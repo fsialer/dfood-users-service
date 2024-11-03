@@ -4,6 +4,7 @@ import Utils.TestUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,7 +27,6 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -70,5 +70,27 @@ public class UserRestAdapterTest {
 
         Mockito.verify(userInputPort,times(1)).findAll();
         Mockito.verify(mapper,times(1)).toUsersResponse(anyList());
+    }
+
+    @Test
+    void shouldAUsersWhenUserFindById() throws Exception {
+
+        User user= TestUtils.buildUserMock();
+        UserResponse usersResponse= TestUtils.buildUserResponseMock();
+
+        when(userInputPort.findById(anyLong()))
+                .thenReturn(user);
+
+        when(mapper.toUserResponse(any(User.class)))
+                .thenReturn(usersResponse);
+
+        mockMvc.perform(get("/users/{id}",1L).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andExpect(jsonPath("$").exists())
+                .andDo(print());
+
+        Mockito.verify(userInputPort,times(1)).findById(anyLong());
+        Mockito.verify(mapper,times(1)).toUserResponse(any(User.class));
     }
 }

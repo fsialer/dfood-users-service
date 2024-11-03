@@ -2,6 +2,7 @@ package com.fernando.ms.users.app.dfood_users_service.application.services;
 
 import com.fernando.ms.users.app.dfood_users_service.application.ports.input.UserInputPort;
 import com.fernando.ms.users.app.dfood_users_service.application.ports.output.UserPersistencePort;
+import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserNotFoundException;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,5 +17,10 @@ public class UserService implements UserInputPort {
     @Override
     public List<User> findAll() {
         return userPersistencePort.findAll();
+    }
+
+    @Override
+    public User findById(Long id) {
+        return userPersistencePort.findById(id).orElseThrow(UserNotFoundException::new);
     }
 }

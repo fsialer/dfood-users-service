@@ -10,4 +10,8 @@ import java.util.List;
 public interface UserRestMapper {
 
     List<UserResponse> toUsersResponse(List<User> users);
+
+    UserResponse toUserResponse(User user);
+
+
 }

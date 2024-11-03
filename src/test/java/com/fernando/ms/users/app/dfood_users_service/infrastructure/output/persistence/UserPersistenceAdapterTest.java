@@ -15,11 +15,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-import static net.bytebuddy.matcher.ElementMatchers.any;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyCollection;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -65,5 +65,25 @@ public class UserPersistenceAdapterTest {
 
         Mockito.verify(userJpaRepository,times(1)).findAll();
         Mockito.verify(userPersistenceMapper,times(1)).toUsers(anyList());
+    }
+
+    @Test
+    void WhenHaveDataUserThenReturnUser(){
+        UserEntity userEntity= TestUtils.buildUserEntityMock();
+        User user=TestUtils.buildUserMock();
+        when(userJpaRepository.findById(anyLong()))
+                .thenReturn(Optional.of(userEntity));
+        when(userPersistenceMapper.toUser(any(UserEntity.class)))
+                .thenReturn(user);
+
+         Optional<User> userResponse=userPersistenceAdapter.findById(1L);
+
+         assertAll(
+                 ()->assertNotNull(userResponse),
+                 ()->assertTrue(userResponse.isPresent())
+         );
+
+        Mockito.verify(userJpaRepository,times(1)).findById(anyLong());
+        Mockito.verify(userPersistenceMapper,times(1)).toUser(any(UserEntity.class));
     }
 }

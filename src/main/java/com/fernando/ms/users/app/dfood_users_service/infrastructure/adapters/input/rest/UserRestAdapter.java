@@ -6,6 +6,7 @@ import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.inp
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,5 +21,10 @@ public class UserRestAdapter {
     @GetMapping
     public ResponseEntity<List<UserResponse>> findAll(){
         return ResponseEntity.ok().body(userRestMapper.toUsersResponse(userInputPort.findAll()));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponse> findById(@PathVariable Long id){
+        return ResponseEntity.ok().body(userRestMapper.toUserResponse(userInputPort.findById(id)));
     }
 }
