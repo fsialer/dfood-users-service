@@ -4,6 +4,7 @@ import com.fernando.ms.users.app.dfood_users_service.application.ports.input.Use
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.mapper.UserRestMapper;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserClientCreateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserDealerCreateRequest;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserUpdateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.response.UserResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,5 +43,11 @@ public class UserRestAdapter {
 
         UserResponse user=userRestMapper.toUserResponse(userInputPort.save(userRestMapper.toUser(userDealerCreateRequest)));
         return ResponseEntity.created(URI.create("/users/".concat(user.getId().toString()))).body(user);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponse> update(@PathVariable Long id,@Valid @RequestBody UserUpdateRequest userUpdateRequest){
+        UserResponse user=userRestMapper.toUserResponse(userInputPort.update(id,userRestMapper.toUser(userUpdateRequest)));
+        return ResponseEntity.ok().body(user);
     }
 }

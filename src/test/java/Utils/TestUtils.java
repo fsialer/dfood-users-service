@@ -5,6 +5,7 @@ import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.StatusUs
 import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.TypeUser;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserClientCreateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserDealerCreateRequest;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserUpdateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.response.UserResponse;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.output.persistence.models.UserEntity;
 
@@ -15,6 +16,27 @@ public class TestUtils {
                 .username("falex")
                 .password("123456")
                 .email("asialer05@hotmail.com")
+                .typeUser(TypeUser.CLIENT)
+                .verify(false)
+                .statusUser(StatusUser.REGISTERED)
+                .build();
+    }
+
+    public static UserUpdateRequest buildUserUpdateRequestMock(){
+        return UserUpdateRequest.builder()
+
+                .email("asialer05@hotmail.com")
+                .build();
+    }
+
+
+
+    public static User buildUserUpdateMock(){
+        return User.builder()
+                .id(1L)
+                .username("falex")
+                .password("123456")
+                .email("asialer06@hotmail.com")
                 .typeUser(TypeUser.CLIENT)
                 .verify(false)
                 .statusUser(StatusUser.REGISTERED)

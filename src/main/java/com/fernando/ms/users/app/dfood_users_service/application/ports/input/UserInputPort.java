@@ -9,4 +9,5 @@ public interface UserInputPort {
     List<User> findAll();
     User findById(Long id);
     User save(User user);
+    User update(Long id, User user);
 }

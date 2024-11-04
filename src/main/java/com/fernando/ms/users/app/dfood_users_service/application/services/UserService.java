@@ -8,7 +8,6 @@ import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserUsern
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,8 +30,6 @@ public class UserService implements UserInputPort {
 
     @Override
     public User save(User user) {
-
-        log.info(user.toString());
         if(userPersistencePort.existsByUsername(user.getUsername())){
             throw new UserUsernameAlreadyExistsException(user.getUsername());
         }
@@ -41,5 +38,20 @@ public class UserService implements UserInputPort {
         }
 
         return userPersistencePort.save(user);
+    }
+
+    @Override
+    public User update(Long id, User user) {
+        return userPersistencePort.findById(id)
+                .map(userUpdated->{
+                    if(!userUpdated.getEmail().equals(user.getEmail())){
+                        if(userPersistencePort.existsByEmail(user.getEmail())){
+                            throw new UserEmailAlreadyExistsException(user.getEmail());
+                        }
+                        userUpdated.setEmail(user.getEmail());
+                    }
+                    return userPersistencePort.save(userUpdated);
+
+                }).orElseThrow(UserNotFoundException::new);
     }
 }

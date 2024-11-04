@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import com.fernando.ms.users.app.dfood_users_service.application.ports.input.UserInputPort;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
@@ -13,6 +12,7 @@ import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.inp
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.mapper.UserRestMapper;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserClientCreateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserDealerCreateRequest;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserUpdateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.response.UserResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -147,6 +147,34 @@ public class UserRestAdapterTest {
 
         Mockito.verify(userInputPort,times(1)).save(any(User.class));
         Mockito.verify(mapper,times(1)).toUser(any(UserDealerCreateRequest.class));
+        Mockito.verify(mapper,times(1)).toUserResponse(any(User.class));
+    }
+
+    @Test
+    void shouldReturnAnUserWhenUpdateUser() throws Exception {
+
+        User user= TestUtils.buildUserMock();
+        UserUpdateRequest userUpdateRequest = TestUtils.buildUserUpdateRequestMock();
+        UserResponse usersResponse= TestUtils.buildUserDealerResponseMock();
+
+        when(userInputPort.update(anyLong(),any(User.class)))
+                .thenReturn(user);
+
+        when(mapper.toUser(any(UserUpdateRequest.class)))
+                .thenReturn(user);
+
+        when(mapper.toUserResponse(any(User.class)))
+                .thenReturn(usersResponse);
+
+        mockMvc.perform(put("/users/{id}",1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userUpdateRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andDo(print());
+
+        Mockito.verify(userInputPort,times(1)).update(anyLong(),any(User.class));
+        Mockito.verify(mapper,times(1)).toUser(any(UserUpdateRequest.class));
         Mockito.verify(mapper,times(1)).toUserResponse(any(User.class));
     }
 }

@@ -5,6 +5,7 @@ import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.StatusUs
 import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.TypeUser;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserClientCreateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserDealerCreateRequest;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserUpdateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.response.UserResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -27,6 +28,8 @@ public interface UserRestMapper {
     @Mapping(target = "statusUser", expression = "java(mapStatusUser())")
     @Mapping(target = "verify", expression = "java(mapVerify())")
     User toUser(UserDealerCreateRequest user);
+
+    User toUser(UserUpdateRequest user);
 
     default TypeUser mapTypeUserClient() {
         return TypeUser.CLIENT;
