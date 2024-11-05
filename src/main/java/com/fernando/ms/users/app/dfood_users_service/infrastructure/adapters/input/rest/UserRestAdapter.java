@@ -9,6 +9,7 @@ import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.inp
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,5 +50,11 @@ public class UserRestAdapter {
     public ResponseEntity<UserResponse> update(@PathVariable Long id,@Valid @RequestBody UserUpdateRequest userUpdateRequest){
         UserResponse user=userRestMapper.toUserResponse(userInputPort.update(id,userRestMapper.toUser(userUpdateRequest)));
         return ResponseEntity.ok().body(user);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id){
+        userInputPort.delete(id);
     }
 }

@@ -4,7 +4,6 @@ import Utils.TestUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.times;
 
 import com.fernando.ms.users.app.dfood_users_service.application.ports.input.UserInputPort;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
@@ -26,7 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -176,5 +175,19 @@ public class UserRestAdapterTest {
         Mockito.verify(userInputPort,times(1)).update(anyLong(),any(User.class));
         Mockito.verify(mapper,times(1)).toUser(any(UserUpdateRequest.class));
         Mockito.verify(mapper,times(1)).toUserResponse(any(User.class));
+    }
+
+    @Test
+    void shouldReturnVoidWhenDeleteAnUser() throws Exception {
+
+        doNothing().when(userInputPort).delete(anyLong());
+
+        mockMvc.perform(delete("/users/{id}",1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andDo(print());
+
+        Mockito.verify(userInputPort,times(1)).delete(anyLong());
+
     }
 }

@@ -19,8 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -154,5 +153,26 @@ public class UserServiceTest {
         Mockito.verify(userPersistencePort,times(1)).existsByEmail(anyString());
         Mockito.verify(userPersistencePort,times(1)).findById(anyLong());
         Mockito.verify(userPersistencePort,times(0)).save(any(User.class));
+    }
+
+    @Test
+    void shouldReturnVoidWhenDeleteAnUser(){
+        User userNew=TestUtils.buildUserMock();
+        doNothing().when(userPersistencePort).delete(anyLong());
+        when(userPersistencePort.findById(anyLong()))
+                .thenReturn(Optional.of(userNew));
+        userService.delete(1L);
+        Mockito.verify(userPersistencePort,times(1)).delete(anyLong());
+        Mockito.verify(userPersistencePort,times(1)).findById(anyLong());
+    }
+
+    @Test
+    void shouldReturnUserNotFoundExceptionWhenDeleteAnUser(){
+        doNothing().when(userPersistencePort).delete(anyLong());
+        when(userPersistencePort.findById(anyLong()))
+                .thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class,()->userService.delete(1L));
+        Mockito.verify(userPersistencePort,times(1)).delete(anyLong());
+        Mockito.verify(userPersistencePort,times(1)).findById(anyLong());
     }
 }

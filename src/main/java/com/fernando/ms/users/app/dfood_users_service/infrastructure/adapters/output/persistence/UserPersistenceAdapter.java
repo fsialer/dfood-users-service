@@ -39,4 +39,9 @@ public class UserPersistenceAdapter implements UserPersistencePort {
     public boolean existsByUsername(String username) {
         return jpaRepository.existsByUsernameIgnoreCase(username);
     }
+
+    @Override
+    public void delete(Long id) {
+        jpaRepository.deleteById(id);
+    }
 }

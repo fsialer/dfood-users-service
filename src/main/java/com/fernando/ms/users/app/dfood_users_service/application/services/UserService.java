@@ -54,4 +54,12 @@ public class UserService implements UserInputPort {
 
                 }).orElseThrow(UserNotFoundException::new);
     }
+
+    @Override
+    public void delete(Long id) {
+        if(userPersistencePort.findById(id).isEmpty()){
+            throw new UserNotFoundException();
+        }
+        userPersistencePort.delete(id);
+    }
 }

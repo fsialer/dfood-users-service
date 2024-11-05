@@ -20,8 +20,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserPersistenceAdapterTest {
@@ -134,5 +133,12 @@ public class UserPersistenceAdapterTest {
         when(userJpaRepository.existsByEmailIgnoreCase(anyString())).thenReturn (false);
         assertFalse(userJpaRepository.existsByEmailIgnoreCase("asialer05@hotmail.com"));
         Mockito.verify(userJpaRepository,times(1)).existsByEmailIgnoreCase(anyString());
+    }
+
+    @Test
+    void shouldVoidWhenDeleteAnUser(){
+        doNothing().when(userJpaRepository).deleteById(anyLong());
+        userPersistenceAdapter.delete(1L);
+        Mockito.verify(userJpaRepository,times(1)).deleteById(anyLong());
     }
 }
