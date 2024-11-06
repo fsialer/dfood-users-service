@@ -14,6 +14,7 @@ public class UserResponse {
     private Long id;
     private String username;
     private String email;
+    private String fullName;
     private TypeUser typeUser;
     private Boolean verify;
     private StatusUser statusUser;
