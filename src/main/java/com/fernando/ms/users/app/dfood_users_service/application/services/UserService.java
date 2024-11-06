@@ -51,6 +51,7 @@ public class UserService implements UserInputPort {
                         }
                         userUpdated.setEmail(user.getEmail());
                     }
+                    userUpdated.setFullName(user.getFullName());
                     return userPersistencePort.save(userUpdated);
 
                 }).orElseThrow(UserNotFoundException::new);

@@ -14,6 +14,8 @@ public class UserDealerCreateRequest {
     private String username;
     @NotBlank(message = "Field password cannot be null or blank")
     private String password;
+    @NotBlank(message = "Field fullName cannot be null or blank")
+    private String fullName;
     @NotBlank(message = "Field email cannot be null or blank")
     @Email(message = "Field email cannot valid")
     private String email;
