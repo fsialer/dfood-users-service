@@ -15,6 +15,7 @@ public class TestUtils {
                 .id(1L)
                 .username("falex")
                 .password("123456")
+                .fullName("Fernando Sialer")
                 .email("asialer05@hotmail.com")
                 .typeUser(TypeUser.CLIENT)
                 .verify(false)
@@ -27,6 +28,7 @@ public class TestUtils {
                 .id(1L)
                 .username("falex")
                 .password("123456")
+                .fullName("Fernando Sialer")
                 .email("asialer05@hotmail.com")
                 .typeUser(TypeUser.CLIENT)
                 .verify(false)
@@ -36,7 +38,7 @@ public class TestUtils {
 
     public static UserUpdateRequest buildUserUpdateRequestMock(){
         return UserUpdateRequest.builder()
-
+                .fullName("Fernando Sialer")
                 .email("asialer05@hotmail.com")
                 .build();
     }
@@ -49,6 +51,7 @@ public class TestUtils {
                 .username("falex")
                 .password("123456")
                 .email("asialer06@hotmail.com")
+                .fullName("Fernando Sialer")
                 .typeUser(TypeUser.CLIENT)
                 .verify(false)
                 .statusUser(StatusUser.REGISTERED)
@@ -60,6 +63,7 @@ public class TestUtils {
                 .id(1L)
                 .username("falex")
                 .password("123456")
+                .fullName("Fernando Sialer")
                 .email("asialer05@hotmail.com")
                 .typeUser(TypeUser.CLIENT)
                 .verify(false)
@@ -72,6 +76,7 @@ public class TestUtils {
                 .id(1L)
                 .username("falex")
                 .email("asialer05@hotmail.com")
+                .fullName("Fernando Sialer")
                 .typeUser(TypeUser.CLIENT)
                 .verify(false)
                 .statusUser(StatusUser.REGISTERED)
@@ -83,6 +88,7 @@ public class TestUtils {
                 .username("falex")
                 .email("asialer05@hotmail.com")
                 .password("password")
+                .fullName("Fernando Sialer")
                 .build();
     }
 
@@ -91,6 +97,7 @@ public class TestUtils {
                 .username("falex")
                 .email("asialer05@hotmail.com")
                 .password("password")
+                .fullName("Fernando Sialer")
                 .build();
     }
 
@@ -99,6 +106,7 @@ public class TestUtils {
                 .id(1L)
                 .username("falex")
                 .email("asialer05@hotmail.com")
+                .fullName("Fernando Sialer")
                 .typeUser(TypeUser.DEALER)
                 .verify(false)
                 .statusUser(StatusUser.REGISTERED)
@@ -110,6 +118,7 @@ public class TestUtils {
                 .id(1L)
                 .username("falex")
                 .email("asialer05@hotmail.com")
+                .fullName("Fernando Sialer")
                 .typeUser(TypeUser.DEALER)
                 .verify(false)
                 .statusUser(StatusUser.INACTIVE)
