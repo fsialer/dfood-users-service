@@ -13,4 +13,6 @@ public class UserUpdateRequest {
     @NotBlank(message = "Field email cannot be null or blank")
     @Email(message = "Field email cannot valid")
     private String email;
+    @NotBlank(message = "Field fullName cannot be null or blank")
+    private String fullName;
 }
