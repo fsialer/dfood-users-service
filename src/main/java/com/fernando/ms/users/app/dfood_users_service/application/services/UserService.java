@@ -7,6 +7,7 @@ import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserNotFo
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserUsernameAlreadyExistsException;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.StatusUser;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.utils.PasswordUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,9 @@ public class UserService implements UserInputPort {
         if(userPersistencePort.existsByEmail(user.getEmail())){
             throw new UserEmailAlreadyExistsException(user.getEmail());
         }
-
+        String salt=PasswordUtils.generateSalt();
+        user.setPasswordHash(PasswordUtils.hashPassword(user.getPasswordHash(),salt));
+        user.setPasswordSalt(salt);
         return userPersistencePort.save(user);
     }
 
