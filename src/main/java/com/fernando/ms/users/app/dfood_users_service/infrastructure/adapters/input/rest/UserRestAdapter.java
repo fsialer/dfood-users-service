@@ -57,4 +57,12 @@ public class UserRestAdapter {
     public void delete(@PathVariable Long id){
         userInputPort.delete(id);
     }
+
+    @PutMapping("/{id}/inactive")
+    public ResponseEntity<UserResponse> inactive(@PathVariable Long id){
+        UserResponse user=userRestMapper.toUserResponse(userInputPort.inactive(id));
+        return ResponseEntity.ok().body(user);
+    }
+
+
 }

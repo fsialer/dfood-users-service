@@ -6,6 +6,7 @@ import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserEmail
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserNotFoundException;
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserUsernameAlreadyExistsException;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
+import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.StatusUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -62,4 +63,15 @@ public class UserService implements UserInputPort {
         }
         userPersistencePort.delete(id);
     }
+
+    @Override
+    public User inactive(Long id) {
+        return userPersistencePort.findById(id)
+                .map(userUpdated->{
+                    userUpdated.setStatusUser(StatusUser.INACTIVE);
+                    return userPersistencePort.save(userUpdated);
+
+                }).orElseThrow(UserNotFoundException::new);
+    }
+
 }

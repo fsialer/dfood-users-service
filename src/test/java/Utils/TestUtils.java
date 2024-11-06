@@ -22,6 +22,18 @@ public class TestUtils {
                 .build();
     }
 
+    public static User buildUserInactiveMock(){
+        return User.builder()
+                .id(1L)
+                .username("falex")
+                .password("123456")
+                .email("asialer05@hotmail.com")
+                .typeUser(TypeUser.CLIENT)
+                .verify(false)
+                .statusUser(StatusUser.INACTIVE)
+                .build();
+    }
+
     public static UserUpdateRequest buildUserUpdateRequestMock(){
         return UserUpdateRequest.builder()
 
@@ -90,6 +102,17 @@ public class TestUtils {
                 .typeUser(TypeUser.DEALER)
                 .verify(false)
                 .statusUser(StatusUser.REGISTERED)
+                .build();
+    }
+
+    public static UserResponse buildUserInactiveResponseMock(){
+        return UserResponse.builder()
+                .id(1L)
+                .username("falex")
+                .email("asialer05@hotmail.com")
+                .typeUser(TypeUser.DEALER)
+                .verify(false)
+                .statusUser(StatusUser.INACTIVE)
                 .build();
     }
 

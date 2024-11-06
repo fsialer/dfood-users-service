@@ -11,4 +11,5 @@ public interface UserInputPort {
     User save(User user);
     User update(Long id, User user);
     void delete(Long id);
+    User inactive(Long id);
 }

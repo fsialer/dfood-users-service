@@ -44,4 +44,6 @@ public class UserPersistenceAdapter implements UserPersistencePort {
     public void delete(Long id) {
         jpaRepository.deleteById(id);
     }
+
+
 }

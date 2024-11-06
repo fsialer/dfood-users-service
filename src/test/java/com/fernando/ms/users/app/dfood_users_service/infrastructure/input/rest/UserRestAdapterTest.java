@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.*;
 
 import com.fernando.ms.users.app.dfood_users_service.application.ports.input.UserInputPort;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
+import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.StatusUser;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.UserRestAdapter;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.mapper.UserRestMapper;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserClientCreateRequest;
@@ -188,6 +189,26 @@ public class UserRestAdapterTest {
                 .andDo(print());
 
         Mockito.verify(userInputPort,times(1)).delete(anyLong());
+
+    }
+
+    @Test
+    void shouldReturnUserInactiveWhenInactiveUserById() throws Exception {
+
+        User user= TestUtils.buildUserInactiveMock();
+        UserResponse usersResponse= TestUtils.buildUserInactiveResponseMock();
+        when(userInputPort.inactive(anyLong()))
+                .thenReturn(user);
+        when(mapper.toUserResponse(any(User.class)))
+                .thenReturn(usersResponse);
+        mockMvc.perform(put("/users/{id}/inactive",1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusUser").value("INACTIVE"))
+                .andDo(print());
+        Mockito.verify(userInputPort,times(1)).inactive(anyLong());
+
+        Mockito.verify(mapper,times(1)).toUserResponse(any(User.class));
 
     }
 }

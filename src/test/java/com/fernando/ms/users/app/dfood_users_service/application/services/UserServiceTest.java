@@ -168,11 +168,36 @@ public class UserServiceTest {
 
     @Test
     void shouldReturnUserNotFoundExceptionWhenDeleteAnUser(){
-        doNothing().when(userPersistencePort).delete(anyLong());
+
         when(userPersistencePort.findById(anyLong()))
                 .thenReturn(Optional.empty());
-        assertThrows(UserNotFoundException.class,()->userService.delete(1L));
-        Mockito.verify(userPersistencePort,times(1)).delete(anyLong());
+        assertThrows(UserNotFoundException.class,()->userService.delete(2L));
+        Mockito.verify(userPersistencePort,times(0)).delete(anyLong());
         Mockito.verify(userPersistencePort,times(1)).findById(anyLong());
+    }
+
+    @Test
+    void shouldInactiveAnUserWhenUserFindById(){
+        User userNew=TestUtils.buildUserInactiveMock();
+        when(userPersistencePort.save(any(User.class)))
+                .thenReturn(userNew);
+        when(userPersistencePort.findById(anyLong()))
+                .thenReturn(Optional.of(userNew));
+        User user=userService.inactive(1L);
+        assertEquals(userNew.getStatusUser(),user.getStatusUser());
+        Mockito.verify(userPersistencePort,times(1)).save(any(User.class));
+        Mockito.verify(userPersistencePort,times(1)).findById(anyLong());
+
+    }
+
+    @Test
+    void shouldReturnUserNotFoundExceptionWhenWhenInactiveUserFindById(){
+
+        when(userPersistencePort.findById(anyLong()))
+                .thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class,()->userService.delete(2L));
+        Mockito.verify(userPersistencePort,times(0)).save(any(User.class));
+        Mockito.verify(userPersistencePort,times(1)).findById(anyLong());
+
     }
 }
