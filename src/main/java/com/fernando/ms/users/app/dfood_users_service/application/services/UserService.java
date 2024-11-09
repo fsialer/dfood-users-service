@@ -2,6 +2,7 @@ package com.fernando.ms.users.app.dfood_users_service.application.services;
 
 import com.fernando.ms.users.app.dfood_users_service.application.ports.input.UserInputPort;
 import com.fernando.ms.users.app.dfood_users_service.application.ports.output.UserPersistencePort;
+import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.CredentialFailedException;
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserEmailAlreadyExistsException;
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserNotFoundException;
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserUsernameAlreadyExistsException;
@@ -20,6 +21,7 @@ import java.util.List;
 public class UserService implements UserInputPort {
 
     private final UserPersistencePort userPersistencePort;
+    private final PasswordUtils passwordUtils;
     @Override
     public List<User> findAll() {
         return userPersistencePort.findAll();
@@ -38,8 +40,8 @@ public class UserService implements UserInputPort {
         if(userPersistencePort.existsByEmail(user.getEmail())){
             throw new UserEmailAlreadyExistsException(user.getEmail());
         }
-        String salt=PasswordUtils.generateSalt();
-        user.setPasswordHash(PasswordUtils.hashPassword(user.getPasswordHash(),salt));
+        String salt= passwordUtils.generateSalt();
+        user.setPasswordHash(passwordUtils.hashPassword(user.getPassword(),salt));
         user.setPasswordSalt(salt);
         return userPersistencePort.save(user);
     }
@@ -75,6 +77,20 @@ public class UserService implements UserInputPort {
                     userUpdated.setStatusUser(StatusUser.INACTIVE);
                     return userPersistencePort.save(userUpdated);
 
+                }).orElseThrow(UserNotFoundException::new);
+    }
+
+    @Override
+    public User changePassword(Long id,User user) {
+        return userPersistencePort.findById(id)
+                .map(userUpdated->{
+                    if(!passwordUtils.validatePassword(user.getPassword(),userUpdated.getPasswordSalt(),userUpdated.getPasswordHash())){
+                        throw new CredentialFailedException();
+                    }
+                    String salt= passwordUtils.generateSalt();
+                    userUpdated.setPasswordHash(passwordUtils.hashPassword(user.getNewPassword(),salt));
+                    userUpdated.setPasswordSalt(salt);
+                    return userPersistencePort.save(userUpdated);
                 }).orElseThrow(UserNotFoundException::new);
     }
 

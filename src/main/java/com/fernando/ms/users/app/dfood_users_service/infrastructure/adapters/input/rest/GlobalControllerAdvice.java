@@ -1,6 +1,7 @@
 package com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest;
 
 
+import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.CredentialFailedException;
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserEmailAlreadyExistsException;
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserNotFoundException;
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserUsernameAlreadyExistsException;
@@ -70,6 +71,17 @@ public class GlobalControllerAdvice {
                 .details(bindingResult.getFieldErrors().stream()
                         .map(DefaultMessageSourceResolvable::getDefaultMessage)
                         .toList())
+                .timestamp(LocalDate.now().toString())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CredentialFailedException.class)
+    public ErrorResponse handleCredentialFailedException() {
+        return ErrorResponse.builder()
+                .code(USERS_CREDENTIAL_FAILED.getCode())
+                .type(FUNCTIONAL)
+                .message(USERS_CREDENTIAL_FAILED.getMessage())
                 .timestamp(LocalDate.now().toString())
                 .build();
     }

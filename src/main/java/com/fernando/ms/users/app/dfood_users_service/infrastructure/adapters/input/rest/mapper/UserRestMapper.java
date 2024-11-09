@@ -3,11 +3,11 @@ package com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.in
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.StatusUser;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.TypeUser;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.ChangePasswordRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserClientCreateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserDealerCreateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserUpdateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.response.UserResponse;
-import com.fernando.ms.users.app.dfood_users_service.infrastructure.utils.PasswordUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -23,16 +23,18 @@ public interface UserRestMapper {
     @Mapping(target = "typeUser", expression = "java(mapTypeUserClient())")
     @Mapping(target = "statusUser", expression = "java(mapStatusUser())")
     @Mapping(target = "verify", expression = "java(mapVerify())")
-    @Mapping(target = "passwordHash" , source = "password")
+    //@Mapping(target = "passwordHash" , source = "password")
     User toUser(UserClientCreateRequest user);
 
     @Mapping(target = "typeUser", expression = "java(mapTypeUserDealer())")
     @Mapping(target = "statusUser", expression = "java(mapStatusUser())")
     @Mapping(target = "verify", expression = "java(mapVerify())")
-    @Mapping(target = "passwordHash" , source = "password")
+    //@Mapping(target = "passwordHash" , source = "password")
     User toUser(UserDealerCreateRequest user);
 
     User toUser(UserUpdateRequest user);
+
+    User toUser(ChangePasswordRequest user);
 
     default TypeUser mapTypeUserClient() {
         return TypeUser.CLIENT;

@@ -2,6 +2,7 @@ package com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.in
 
 import com.fernando.ms.users.app.dfood_users_service.application.ports.input.UserInputPort;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.mapper.UserRestMapper;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.ChangePasswordRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserClientCreateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserDealerCreateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserUpdateRequest;
@@ -61,6 +62,12 @@ public class UserRestAdapter {
     @PutMapping("/{id}/inactive")
     public ResponseEntity<UserResponse> inactive(@PathVariable Long id){
         UserResponse user=userRestMapper.toUserResponse(userInputPort.inactive(id));
+        return ResponseEntity.ok().body(user);
+    }
+
+    @PutMapping("/{id}/change-password")
+    public ResponseEntity<UserResponse> changePassword(@PathVariable Long id, @Valid @RequestBody ChangePasswordRequest rq){
+        UserResponse user=userRestMapper.toUserResponse(userInputPort.changePassword(id,userRestMapper.toUser(rq)));
         return ResponseEntity.ok().body(user);
     }
 

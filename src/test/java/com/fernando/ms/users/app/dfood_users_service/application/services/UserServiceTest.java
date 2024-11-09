@@ -2,10 +2,13 @@ package com.fernando.ms.users.app.dfood_users_service.application.services;
 
 import Utils.TestUtils;
 import com.fernando.ms.users.app.dfood_users_service.application.ports.output.UserPersistencePort;
+import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.CredentialFailedException;
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserEmailAlreadyExistsException;
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserNotFoundException;
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserUsernameAlreadyExistsException;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.utils.PasswordUtils;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.utils.PasswordUtilsImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,6 +32,10 @@ public class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
+
+    @Mock
+    private PasswordUtils passwordUtils;
+
 
     @Test
     void shouldReturnListOfUserWhenListHaveData(){
@@ -192,12 +199,42 @@ public class UserServiceTest {
 
     @Test
     void shouldReturnUserNotFoundExceptionWhenWhenInactiveUserFindById(){
-
         when(userPersistencePort.findById(anyLong()))
                 .thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class,()->userService.delete(2L));
         Mockito.verify(userPersistencePort,times(0)).save(any(User.class));
         Mockito.verify(userPersistencePort,times(1)).findById(anyLong());
+    }
 
+    @Test
+    void shouldReturnUserWhenChangePasswordById() {
+        User userNew = TestUtils.buildUserWithinHashAndSaltMock();
+        User userUpdated = TestUtils.buildUserWithHashAndSaltMock();
+        when(userPersistencePort.save(any(User.class)))
+                .thenReturn(userUpdated);
+        when(userPersistencePort.findById(anyLong()))
+                .thenReturn(Optional.of(userUpdated));
+        when(passwordUtils.validatePassword(anyString(),anyString(),anyString()))
+                .thenReturn(true);
+        User user = userService.changePassword(1L, userNew);
+        assertEquals(userUpdated.getPasswordSalt(), user.getPasswordSalt());
+        assertEquals(userUpdated.getPasswordHash(), user.getPasswordHash());
+        Mockito.verify(userPersistencePort, times(1)).save(any(User.class));
+        Mockito.verify(userPersistencePort, times(1)).findById(anyLong());
+        Mockito.verify(passwordUtils,times(1)).validatePassword(anyString(),anyString(),anyString());
+    }
+
+    @Test
+    void shouldReturnCredentialFailedExceptionUserWhenChangePasswordById(){
+        User userNew=TestUtils.buildUserWithinHashAndSaltMock();
+        User userUpdated=TestUtils.buildUserWithHashAndSaltMock();
+        when(userPersistencePort.findById(anyLong()))
+                .thenReturn(Optional.of(userUpdated));
+        when(passwordUtils.validatePassword(anyString(),anyString(),anyString()))
+                .thenReturn(false);
+        assertThrows(CredentialFailedException.class,()->userService.changePassword(1L,userNew));
+        Mockito.verify(userPersistencePort,times(0)).save(any(User.class));
+        Mockito.verify(userPersistencePort,times(1)).findById(anyLong());
+        Mockito.verify(passwordUtils,times(1)).validatePassword(anyString(),anyString(),anyString());
     }
 }

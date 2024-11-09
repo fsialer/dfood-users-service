@@ -3,6 +3,7 @@ package Utils;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.StatusUser;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.TypeUser;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.ChangePasswordRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserClientCreateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserDealerCreateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserUpdateRequest;
@@ -14,8 +15,43 @@ public class TestUtils {
         return User.builder()
                 .id(1L)
                 .username("falex")
-                .passwordSalt("123456")
-                .passwordHash("#$G#!!$DEWE")
+                .passwordSalt("5S6p2d0eku23V4mltiAPFg==")
+                .passwordHash("lxAE6YPCLwmntfINARfhSzW/l/9n7O5/OXFa2b9cQu4=")
+                .fullName("Fernando Sialer")
+                .email("asialer05@hotmail.com")
+                .typeUser(TypeUser.CLIENT)
+                .verify(false)
+                .statusUser(StatusUser.REGISTERED)
+                .build();
+    }
+
+    public static ChangePasswordRequest buildUserChangePasswordMock(){
+        return ChangePasswordRequest.builder()
+                .password("fdfdf")
+                .newPassword("fdfdf")
+                .confirmPassword("fdfdf")
+                .build();
+    }
+
+    public static User buildUserWithHashAndSaltMock(){
+        return User.builder()
+                .id(1L)
+                .username("falex")
+                .passwordSalt("5S6p2d0eku23V4mltiAPFg==")
+                .passwordHash("lxAE6YPCLwmntfINARfhSzW/l/9n7O5/OXFa2b9cQu4=")
+                .fullName("Fernando Sialer")
+                .email("asialer05@hotmail.com")
+                .typeUser(TypeUser.CLIENT)
+                .verify(false)
+                .statusUser(StatusUser.REGISTERED)
+                .build();
+    }
+
+    public static User buildUserWithinHashAndSaltMock(){
+        return User.builder()
+                .id(1L)
+                .username("falex")
+                .passwordHash("fdfdf")
                 .fullName("Fernando Sialer")
                 .email("asialer05@hotmail.com")
                 .typeUser(TypeUser.CLIENT)
@@ -28,8 +64,8 @@ public class TestUtils {
         return User.builder()
                 .id(1L)
                 .username("falex")
-                .passwordSalt("123456")
-                .passwordHash("#$G#!!$DEWE")
+                .passwordSalt("5S6p2d0eku23V4mltiAPFg==")
+                .passwordHash("lxAE6YPCLwmntfINARfhSzW/l/9n7O5/OXFa2b9cQu4=")
                 .fullName("Fernando Sialer")
                 .email("asialer05@hotmail.com")
                 .typeUser(TypeUser.CLIENT)
@@ -51,8 +87,8 @@ public class TestUtils {
         return User.builder()
                 .id(1L)
                 .username("falex")
-                .passwordSalt("123456")
-                .passwordHash("#$G#!!$DEWE")
+                .passwordSalt("5S6p2d0eku23V4mltiAPFg==")
+                .passwordHash("lxAE6YPCLwmntfINARfhSzW/l/9n7O5/OXFa2b9cQu4=")
                 .email("asialer06@hotmail.com")
                 .fullName("Fernando Sialer")
                 .typeUser(TypeUser.CLIENT)
@@ -65,8 +101,8 @@ public class TestUtils {
         return UserEntity.builder()
                 .id(1L)
                 .username("falex")
-                .passwordSalt("123456")
-                .passwordHash("#$G#!!$DEWE")
+                .passwordSalt("5S6p2d0eku23V4mltiAPFg==")
+                .passwordHash("lxAE6YPCLwmntfINARfhSzW/l/9n7O5/OXFa2b9cQu4=")
                 .fullName("Fernando Sialer")
                 .email("asialer05@hotmail.com")
                 .typeUser(TypeUser.CLIENT)

@@ -3,15 +3,19 @@ package com.fernando.ms.users.app.dfood_users_service.infrastructure.input.rest;
 import Utils.TestUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fernando.ms.users.app.dfood_users_service.application.ports.input.UserInputPort;
+import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.CredentialFailedException;
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserEmailAlreadyExistsException;
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserNotFoundException;
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserUsernameAlreadyExistsException;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.UserRestAdapter;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.mapper.UserRestMapper;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.ChangePasswordRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserClientCreateRequest;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.response.ErrorResponse;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.response.UserResponse;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,9 +29,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {UserRestAdapter.class})
@@ -139,7 +145,7 @@ public class GlobalControllerAdviceTest {
     }
 
     @Test
-    void whenThrowsGenericException_thenReturnInternalServerErrorResponse() throws Exception {
+    void whenThrowsGenericExceptionThenReturnInternalServerErrorResponse() throws Exception {
         when(userInputPort.findAll())
                 .thenThrow(new RuntimeException("Generic error"));
 
@@ -158,5 +164,30 @@ public class GlobalControllerAdviceTest {
                 })
                 .andDo(print());
     }
+
+    @Test
+    void whenThrowsCredentialFailedExceptionThenReturnCredentialFailedExceptionErrorResponse() throws Exception {
+        User user= TestUtils.buildUserMock();
+        ChangePasswordRequest changePasswordRequest = TestUtils.buildUserChangePasswordMock();
+        when(userRestMapper.toUser(any(ChangePasswordRequest.class)))
+                .thenReturn(user);
+        when(userInputPort.changePassword(anyLong(),any(User.class)))
+                .thenThrow(new CredentialFailedException());
+
+        mockMvc.perform(put("/users/{id}/change-password",1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(changePasswordRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> {
+                    ErrorResponse errorResponse = objectMapper.readValue(
+                            result.getResponse().getContentAsString(), ErrorResponse.class);
+                    assertThat(errorResponse.getCode()).isEqualTo(USERS_CREDENTIAL_FAILED.getCode());
+                    assertThat(errorResponse.getType()).isEqualTo(FUNCTIONAL);
+                    assertThat(errorResponse.getMessage()).isEqualTo(USERS_CREDENTIAL_FAILED.getMessage());
+                    assertThat(errorResponse.getTimestamp()).isNotNull();
+                })
+                .andDo(print());
+    }
+
 
 }
