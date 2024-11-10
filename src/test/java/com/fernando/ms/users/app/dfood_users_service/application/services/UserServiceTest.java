@@ -8,7 +8,6 @@ import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserNotFo
 import com.fernando.ms.users.app.dfood_users_service.domain.exceptions.UserUsernameAlreadyExistsException;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.utils.PasswordUtils;
-import com.fernando.ms.users.app.dfood_users_service.infrastructure.utils.PasswordUtilsImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -134,7 +133,6 @@ public class UserServiceTest {
 
     @Test
     void shouldReturnUserNotFoundExceptionWhenUpdateAnUser(){
-        User userNew=TestUtils.buildUserMock();
         User userUpdated=TestUtils.buildUserUpdateMock();
 
         when(userPersistencePort.findById(anyLong()))
@@ -236,5 +234,43 @@ public class UserServiceTest {
         Mockito.verify(userPersistencePort,times(0)).save(any(User.class));
         Mockito.verify(userPersistencePort,times(1)).findById(anyLong());
         Mockito.verify(passwordUtils,times(1)).validatePassword(anyString(),anyString(),anyString());
+    }
+
+    @Test
+    void shouldReturnUserWhenAnUserIsAuthenticated(){
+        User userNew=TestUtils.buildUserMock();
+        User userAuth=TestUtils.buildUserAuthMock();
+        when(userPersistencePort.findByUsername(anyString()))
+                .thenReturn(Optional.of(userNew));
+        when(passwordUtils.validatePassword(anyString(),anyString(),anyString()))
+                .thenReturn(true);
+        User user=userService.authentication(userAuth);
+        assertEquals(userNew.getStatusUser(),user.getStatusUser());
+        Mockito.verify(passwordUtils,times(1)).validatePassword(anyString(),anyString(),anyString());
+        Mockito.verify(userPersistencePort,times(1)).findByUsername(anyString());
+    }
+
+    @Test
+    void shouldReturnCredentialFailedExceptionWhenAnUserHisCredentialNotValid(){
+        User userNew=TestUtils.buildUserMock();
+        User userAuth=TestUtils.buildUserAuthMock();
+        when(userPersistencePort.findByUsername(anyString()))
+                .thenReturn(Optional.of(userNew));
+        when(passwordUtils.validatePassword(anyString(),anyString(),anyString()))
+                .thenReturn(false);
+        assertThrows(CredentialFailedException.class,()->userService.authentication(userAuth));
+        Mockito.verify(passwordUtils,times(1)).validatePassword(anyString(),anyString(),anyString());
+        Mockito.verify(userPersistencePort,times(1)).findByUsername(anyString());
+    }
+
+    @Test
+    void shouldReturnUserNotFoundExceptionWhenAnUserIsAuthenticatedNotFound(){
+        User userAuth=TestUtils.buildUserAuthMock();
+        when(userPersistencePort.findByUsername(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class,()->userService.authentication(userAuth));
+        Mockito.verify(passwordUtils,times(0)).validatePassword(anyString(),anyString(),anyString());
+        Mockito.verify(userPersistencePort,times(1)).findByUsername(anyString());
     }
 }

@@ -12,4 +12,5 @@ public interface UserPersistencePort {
     boolean existsByEmail(String email);
     boolean existsByUsername(String username);
     void delete(Long id);
+    Optional<User> findByUsername(String username);
 }

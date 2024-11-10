@@ -141,4 +141,24 @@ public class UserPersistenceAdapterTest {
         userPersistenceAdapter.delete(1L);
         Mockito.verify(userJpaRepository,times(1)).deleteById(anyLong());
     }
+
+    @Test
+    void shouldReturnUserWhenFindByUsername(){
+        UserEntity userEntity= TestUtils.buildUserEntityMock();
+        User user=TestUtils.buildUserMock();
+        when(userJpaRepository.findByUsernameIgnoreCase(anyString()))
+                .thenReturn(Optional.of(userEntity));
+        when(userPersistenceMapper.toUser(any(UserEntity.class)))
+                .thenReturn(user);
+
+        Optional<User> userResponse=userPersistenceAdapter.findByUsername("falex");
+
+        assertAll(
+                ()->assertNotNull(userResponse),
+                ()->assertTrue(userResponse.isPresent())
+        );
+
+        Mockito.verify(userJpaRepository,times(1)).findByUsernameIgnoreCase(anyString());
+        Mockito.verify(userPersistenceMapper,times(1)).toUser(any(UserEntity.class));
+    }
 }

@@ -2,10 +2,7 @@ package com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.in
 
 import com.fernando.ms.users.app.dfood_users_service.application.ports.input.UserInputPort;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.mapper.UserRestMapper;
-import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.ChangePasswordRequest;
-import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserClientCreateRequest;
-import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserDealerCreateRequest;
-import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserUpdateRequest;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.*;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.response.UserResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +21,7 @@ import java.util.List;
 public class UserRestAdapter {
     private final UserInputPort userInputPort;
     private final UserRestMapper userRestMapper;
+
     @GetMapping
     public ResponseEntity<List<UserResponse>> findAll(){
         return ResponseEntity.ok().body(userRestMapper.toUsersResponse(userInputPort.findAll()));
@@ -68,6 +66,12 @@ public class UserRestAdapter {
     @PutMapping("/{id}/change-password")
     public ResponseEntity<UserResponse> changePassword(@PathVariable Long id, @Valid @RequestBody ChangePasswordRequest rq){
         UserResponse user=userRestMapper.toUserResponse(userInputPort.changePassword(id,userRestMapper.toUser(rq)));
+        return ResponseEntity.ok().body(user);
+    }
+
+    @PostMapping("/auth")
+    public ResponseEntity<UserResponse> authentication(@Valid @RequestBody UserAuthRequest rq){
+        UserResponse user=userRestMapper.toUserResponse(userInputPort.authentication(userRestMapper.toUser(rq)));
         return ResponseEntity.ok().body(user);
     }
 

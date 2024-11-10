@@ -8,11 +8,9 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @Builder
-public class ChangePasswordRequest {
+public class UserAuthRequest {
+    @NotBlank(message = "Field username cannot be null or blank")
+    private String username;
     @NotBlank(message = "Field password cannot be null or blank")
     private String password;
-    @NotBlank(message = "Field newPassword cannot be null or blank")
-    private String newPassword;
-    @NotBlank(message = "Field confirmPassword cannot be null or blank")
-    private String confirmPassword;
 }

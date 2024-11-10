@@ -3,10 +3,7 @@ package com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.in
 import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.StatusUser;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.TypeUser;
-import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.ChangePasswordRequest;
-import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserClientCreateRequest;
-import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserDealerCreateRequest;
-import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserUpdateRequest;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.*;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.response.UserResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -35,6 +32,8 @@ public interface UserRestMapper {
     User toUser(UserUpdateRequest user);
 
     User toUser(ChangePasswordRequest user);
+
+    User toUser(UserAuthRequest user);
 
     default TypeUser mapTypeUserClient() {
         return TypeUser.CLIENT;

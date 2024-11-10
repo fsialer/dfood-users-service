@@ -10,10 +10,7 @@ import com.fernando.ms.users.app.dfood_users_service.domain.model.User;
 import com.fernando.ms.users.app.dfood_users_service.domain.model.enums.StatusUser;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.UserRestAdapter;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.mapper.UserRestMapper;
-import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.ChangePasswordRequest;
-import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserClientCreateRequest;
-import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserDealerCreateRequest;
-import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.UserUpdateRequest;
+import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.request.*;
 import com.fernando.ms.users.app.dfood_users_service.infrastructure.adapters.input.rest.models.response.UserResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -233,6 +230,30 @@ public class UserRestAdapterTest {
                 .andDo(print());
         Mockito.verify(userInputPort,times(1)).changePassword(anyLong(),any(User.class));
         Mockito.verify(mapper,times(1)).toUser(any(ChangePasswordRequest.class));
+        Mockito.verify(mapper,times(1)).toUserResponse(any(User.class));
+
+    }
+
+    @Test
+    void shouldReturnUserWhenAnUserAuthenticated() throws Exception {
+
+        User user= TestUtils.buildUserMock();
+        UserResponse usersResponse= TestUtils.buildUserResponseMock();
+        UserAuthRequest userAuthRequest = TestUtils.buildUserAuthRequestMock();
+        when(userInputPort.authentication(any(User.class)))
+                .thenReturn(user);
+        when(mapper.toUser(any(UserAuthRequest.class)))
+                .thenReturn(user);
+        when(mapper.toUserResponse(any(User.class)))
+                .thenReturn(usersResponse);
+        mockMvc.perform(post("/users/auth")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userAuthRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andDo(print());
+        Mockito.verify(userInputPort,times(1)).authentication(any(User.class));
+        Mockito.verify(mapper,times(1)).toUser(any(UserAuthRequest.class));
         Mockito.verify(mapper,times(1)).toUserResponse(any(User.class));
 
     }

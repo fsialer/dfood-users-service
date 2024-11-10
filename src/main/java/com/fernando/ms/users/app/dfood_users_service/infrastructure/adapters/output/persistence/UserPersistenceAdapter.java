@@ -45,5 +45,10 @@ public class UserPersistenceAdapter implements UserPersistencePort {
         jpaRepository.deleteById(id);
     }
 
+    @Override
+    public Optional<User> findByUsername(String username) {
+        return jpaRepository.findByUsernameIgnoreCase(username).map(mapper::toUser);
+    }
+
 
 }

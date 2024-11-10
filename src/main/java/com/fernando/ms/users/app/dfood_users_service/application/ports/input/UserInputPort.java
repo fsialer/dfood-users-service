@@ -13,4 +13,5 @@ public interface UserInputPort {
     void delete(Long id);
     User inactive(Long id);
     User changePassword(Long id,User user);
+    User authentication(User user);
 }

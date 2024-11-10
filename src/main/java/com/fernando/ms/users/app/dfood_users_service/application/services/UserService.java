@@ -94,4 +94,17 @@ public class UserService implements UserInputPort {
                 }).orElseThrow(UserNotFoundException::new);
     }
 
+    @Override
+    public User authentication(User user) {
+        return userPersistencePort.findByUsername(user.getUsername())
+                .map(userObtained->{
+                    if(!passwordUtils.validatePassword(user.getPassword(),userObtained.getPasswordSalt(),userObtained.getPasswordHash())){
+                        throw new CredentialFailedException();
+                    }
+                    return userObtained;
+                })
+                .orElseThrow(UserNotFoundException::new);
+    }
+
+
 }
